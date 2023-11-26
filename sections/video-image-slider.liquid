@@ -1,20 +1,61 @@
 {{ 'splide.min.css' | asset_url | stylesheet_tag }}
 
-<div class="splide" role="group" aria-label="Splide Basic HTML Example">
-  <div class="splide__track">
-    <ul class="splide__list">
-      <li class="splide__slide">Slide 01</li>
-      <li class="splide__slide">Slide 02</li>
-      <li class="splide__slide">Slide 03</li>
-    </ul>
+<section class="page-width">
+  <div class="splide" role="group" aria-label="Splide Basic HTML Example">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {% for block in section.blocks %}
+          {% case block.type %}
+            {% when 'video' %}
+              {% assign video = block.settings.video %}
+              {% assign duration = video.duration | plus: 250 %}
+              <li class="splide__slide single-slider" data-splide-interval="{{ duration }}">
+                {{
+                  video
+                  | video_tag:
+                    autoplay: true,
+                    loop: true,
+                    muted: true,
+                    controls: false,
+                    image_size: '1024x',
+                    width: 1024,
+                    class: 'slider-video'
+                }}
+              </li>
+            {% when 'image' %}
+              <li class="splide__slide single-slider" data-splide-interval="{{ block.settings.time | times: 1000 }}">
+                {{ block.settings.image | image_url: width: 1024 | image_tag }}
+              </li>
+          {% endcase %}
+        {% endfor %}
+      </ul>
+    </div>
   </div>
-</div>
+</section>
 
 <script src="{{ 'splide.min.js' | asset_url }}" defer="defer"></script>
 <script>
   document.addEventListener('DOMContentLoaded', function () {
-    var splide = new Splide('.splide');
+    const option = {
+      type: 'loop',
+      autoplay: 'paused',
+      classes: {
+        arrows: 'splide__arrows your-class-arrows',
+        arrow: 'splide__arrow your-class-arrow',
+        prev: 'splide__arrow--prev your-class-prev',
+        next: 'splide__arrow--next your-class-next-{{ section.id }}',
+      },
+    };
+    const splide = new Splide('.splide', option);
     splide.mount();
+    document.querySelectorAll('.splide__arrow').forEach((el) => {
+      el.style.display = 'none';
+    });
+
+    splide.on( 'move', function (e) {
+      console.log("moving", e)
+    } );
+
   });
 </script>
 
@@ -47,7 +88,13 @@
           "type": "image_picker",
           "id": "image",
           "label": "Image"
-        }
+        },
+        {
+          "type": "number",
+          "id": "time",
+          "label": "Stay Time",
+          "default": 2
+        }        
       ]
     }
   ],
