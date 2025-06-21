@@ -1,0 +1,228 @@
+{% if section.settings.enable %}
+  <link rel="stylesheet" href="{{ 'splide.min.css' | asset_url }}">
+
+{% style %}
+  #video-hero-slider-{{ section.id }} {
+    max-height: 500px;
+    background-color: black;
+    position: relative;
+  }
+  
+  #video-hero-slider-{{ section.id }} .slide-content h2 {
+    color: white;
+  }
+
+  #video-hero-slider-{{ section.id }} .slide-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    user-select: text;
+    -webkit-user-select: text;
+    -ms-user-select: text;
+  }
+
+  #video-hero-slider-{{ section.id }} .slide-button {
+    margin-top: 20px;
+  }
+
+  #video-hero-slider-{{ section.id }} .splide__pagination {
+    left: auto;
+  }
+
+  #video-hero-slider-{{ section.id }} .splide__pagination__page.is-active {
+    transform: scale(1);
+    background: transparent;
+    border: 2px solid white;
+  }
+
+  #video-hero-slider-{{ section.id }} .slide-buttons {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  #video-hero-slider-{{ section.id }} .splide__pagination__page {
+    background: white;
+    border: 2px solid transparent;
+  }
+
+  #video-hero-slider-{{ section.id }} .slide-image,
+  #video-hero-slider-{{ section.id }} .slide-video {
+    width: 100%;
+    max-height: 500px;
+    object-fit: cover;
+    opacity: 0.5;
+    transition: transform 1s ease;
+    transform: scale(1.1);
+  }
+  
+  #video-hero-slider-{{ section.id }} .splide__slide.is-active .slide-image,
+  #video-hero-slider-{{ section.id }} .splide__slide.is-active .slide-video {
+    transform: scale(1);
+  }
+{% endstyle %}
+
+  <div id="video-hero-slider-{{ section.id }}" class="splide video-hero-slider">
+    <div class="splide__track">
+      <ul class="splide__list">
+        {% for block in section.blocks %}
+          <li class="splide__slide" {{ block.shopify_attributes }}>
+            <div class="slide-media">
+              {% if block.settings.video != blank %}
+                {{ block.settings.video | video_tag: autoplay: true, loop: true, muted: true, controls: false, image_size: '1600x', class: "slide-video" }}
+              {% elsif block.settings.image != blank %}
+                <img
+                  src="{{ block.settings.image | image_url: width: 1600 }}"
+                  alt="{{ block.settings.title | escape }}"
+                  class="slide-image"
+                  width="{{ block.settings.image.width }}"
+                  height="{{ block.settings.image.height }}"
+                >
+              {% endif %}
+            </div>
+            <div class="slide-content">
+              {% if block.settings.subtitle != blank %}
+                <div class="slide-subtitle">{{ block.settings.subtitle }}</div>
+              {% endif %}
+              {% if block.settings.title != blank %}
+                <h2 class="slide-title">{{ block.settings.title }}</h2>
+              {% endif %}
+              {% if block.settings.text != blank %}
+                <div class="slide-text">{{ block.settings.text }}</div>
+              {% endif %}
+              <div class="slide-buttons">
+                {% if block.settings.button_label != blank and block.settings.button_link != blank %}
+                  <a href="{{ block.settings.button_link }}" class="slide-button button button--primary">
+                    {{ block.settings.button_label }}
+                  </a>
+                {% endif %}
+                {% if block.settings.button_label_2 != blank and block.settings.button_link_2 != blank %}
+                  <a href="{{ block.settings.button_link_2 }}" class="slide-button button button--secondary">
+                    {{ block.settings.button_label_2 }}
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+  <script src="{{ 'splide.min.js' | asset_url }}" defer></script>
+  <script>
+    function customSlider(){
+      new Splide('#video-hero-slider-{{ section.id }}', {
+        type: 'fade',
+        perPage: 1,
+        autoplay: true,
+        interval: 5000,
+        speed: 1000,
+        pauseOnHover: true,
+        arrows: false,
+        pagination: true,
+        rewind: true
+      }).mount();
+    }
+    document.addEventListener('shopify:section:load', function (event) {
+      if (event.target && event.target.querySelector('#video-hero-slider-{{ section.id }}')) {
+        customSlider();
+      }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+      customSlider();
+    });
+  </script>
+{% endif %}
+
+{% schema %}
+{
+  "name": "Custom Slideshow",
+  "tag": "section",
+  "class": "section",
+  "settings": [
+    {
+      "type": "checkbox",
+      "id": "enable",
+      "label": "Enable section",
+      "default": true
+    }
+  ],
+  "blocks": [
+    {
+      "type": "slide",
+      "name": "Slide",
+      "settings": [
+        {
+          "type": "image_picker",
+          "id": "image",
+          "label": "Image"
+        },
+        {
+          "type": "video",
+          "id": "video",
+          "label": "A Shopify-hosted video"
+        },
+        {
+          "type": "text",
+          "id": "subtitle",
+          "label": "Subtitle"
+        },
+        {
+          "type": "text",
+          "id": "title",
+          "label": "Title"
+        },
+        {
+          "type": "textarea",
+          "id": "text",
+          "label": "Text"
+        },
+        {
+          "type": "text",
+          "id": "button_label",
+          "label": "Button label"
+        },
+        {
+          "type": "url",
+          "id": "button_link",
+          "label": "Button link"
+        },
+        {
+          "type": "text",
+          "id": "button_label_2",
+          "label": "Button label 2"
+        },
+        {
+          "type": "url",
+          "id": "button_link_2",
+          "label": "Button link 2"
+        }
+      ]
+    }
+  ],
+  "presets": [
+    {
+      "name": "Custom Slideshow",
+      "category": "Image",
+      "blocks": [
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        },
+        {
+          "type": "slide"
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
