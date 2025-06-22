@@ -3,13 +3,16 @@
 
 {% style %}
   #video-hero-slider-{{ section.id }} {
-    max-height: 500px;
+    height: calc(100vh - var(--header-height));
     background-color: black;
     position: relative;
   }
   
-  #video-hero-slider-{{ section.id }} .slide-content h2 {
+  #video-hero-slider-{{ section.id }} .slide-title {
     color: white;
+    letter-spacing: 0.18em;
+    line-height: 1.5;
+    margin: 0px auto;
   }
 
   #video-hero-slider-{{ section.id }} .slide-content {
@@ -44,7 +47,6 @@
     display: flex;
     gap: 20px;
     align-items: center;
-    flex-wrap: wrap;
     justify-content: center;
   }
   
@@ -53,10 +55,18 @@
     border: 2px solid transparent;
   }
 
+  #video-hero-slider-{{ section.id }} .splide__track {
+    height: 100%;
+  }
+
+  #video-hero-slider-{{ section.id }} .slide-media {
+    height: 100%;
+  }
+
   #video-hero-slider-{{ section.id }} .slide-image,
   #video-hero-slider-{{ section.id }} .slide-video {
     width: 100%;
-    max-height: 500px;
+    height: 100%;
     object-fit: cover;
     opacity: 0.5;
     transition: transform 1s ease;
@@ -92,19 +102,19 @@
                 <div class="slide-subtitle">{{ block.settings.subtitle }}</div>
               {% endif %}
               {% if block.settings.title != blank %}
-                <h2 class="slide-title">{{ block.settings.title }}</h2>
+                <h1 class="slide-title">{{ block.settings.title }}</h1>
               {% endif %}
               {% if block.settings.text != blank %}
                 <div class="slide-text">{{ block.settings.text }}</div>
               {% endif %}
               <div class="slide-buttons">
                 {% if block.settings.button_label != blank and block.settings.button_link != blank %}
-                  <a href="{{ block.settings.button_link }}" class="slide-button button button--primary">
+                  <a href="{{ block.settings.button_link }}" class="slide-button button button--secondary">
                     {{ block.settings.button_label }}
                   </a>
                 {% endif %}
                 {% if block.settings.button_label_2 != blank and block.settings.button_link_2 != blank %}
-                  <a href="{{ block.settings.button_link_2 }}" class="slide-button button button--secondary">
+                  <a href="{{ block.settings.button_link_2 }}" class="slide-button button button--primary">
                     {{ block.settings.button_label_2 }}
                   </a>
                 {% endif %}
